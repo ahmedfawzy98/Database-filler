@@ -3,4 +3,4 @@ Include/
 Lib/
 Scripts
 pyvenv.cfg
-tables_excel/.~lock
+.~lock*
