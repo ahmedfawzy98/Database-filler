@@ -205,19 +205,17 @@ def create_tutorial(group, place, tut_type, right=False):
         group.add_tut(tut)
 
 
-def check_lecture_case(row, col, saved_names, cell_case=1, single_row=False):
+def check_lecture_case(row, col, cell_case=1, single_row=False):
     global course_name
     previous = sheet.cell_value(row - 2, col)
     next_cell = sheet.cell_value(row + 2, col)
     if 'lec' in str(previous).lower():
-        # crs_name = set_course_name(previous.split('-')[0], saved_names)
         crs_name = modify_course_name(previous.split('-')[0])
         if crs_name.startswith(course_name):
             return 1
     if cell_case == 2 or single_row:
         next_cell = sheet.cell_value(row + 1, col)
     if 'lec' in str(next_cell).lower():
-        # crs_name = set_course_name(next_cell.split('-')[0], saved_names)
         crs_name = modify_course_name(next_cell.split('-')[0])
         if crs_name.startswith(course_name):
             return 2
@@ -486,7 +484,7 @@ def extract_course_name(left_up, left_down, right_up, right_down, case):
 
 def manage_cases(case, group, row, col, group_courses, length, single_row, cells_group):
     if case == 1:
-        return execute_case_1(group, row, col, group_courses, length, single_row, cells_group)
+        return execute_case_1(group, row, col, length, single_row, cells_group)
     elif case == 2:
         return execute_case_2(group, row, col, group_courses, length, single_row, cells_group)
     elif case == 3:
@@ -507,7 +505,7 @@ def manage_cases(case, group, row, col, group_courses, length, single_row, cells
         return execute_case_10(group, row, col, group_courses, length, cells_group)
 
 
-def execute_case_1(group, row, col, group_courses, length, single_row, cells_group):
+def execute_case_1(group, row, col, length, single_row, cells_group):
     left_up = cells_group['left_up']
 
     if find_words(length, 'lab', left_up.lower()):
@@ -530,7 +528,7 @@ def execute_case_1(group, row, col, group_courses, length, single_row, cells_gro
         # special cases of project 1 and project 2
         if course_name == 'Project 1' or course_name == 'Project 2':
             single_row = True
-        lecture_case = check_lecture_case(row, col, group_courses, 1, single_row)
+        lecture_case = check_lecture_case(row, col, 1, single_row)
         if lecture_case == 1:
             group.lecture.time.to = fr
         elif lecture_case == 2:
@@ -601,12 +599,12 @@ def execute_case_2(group, row, col, group_courses, length, single_row, cells_gro
             place = check_place(left_up)
             add_lecture(group, row + 1, col, True, place, True)
             return
-        elif check_lecture_case(row, col, group_courses, 1, single_row) == 1:
+        elif check_lecture_case(row, col, 1, single_row) == 1:
             group.lecture.time.to = fr
-        elif check_lecture_case(row, col, group_courses, 1, single_row) == 3:
+        elif check_lecture_case(row, col, 1, single_row) == 3:
             place = check_place(left_up)
             add_lecture_extension(group, place)
-        elif check_lecture_case(row, col, group_courses, 1, single_row) == 4:
+        elif check_lecture_case(row, col, 1, single_row) == 4:
             place = check_place(left_up)
             add_lecture(group, row, col, True, place)
         if find_words(exp_length, 'tut', left_down.lower()):
@@ -624,7 +622,7 @@ def execute_case_2(group, row, col, group_courses, length, single_row, cells_gro
                 create_tutorial(group, place, 2)
             elif find_words(length, 'lab', left_up.lower()):
                 create_lab(group, 2)
-            lecture_case = check_lecture_case(row + 1, col, group_courses, 2)
+            lecture_case = check_lecture_case(row + 1, col, 2)
             if lecture_case == 2:
                 row += 2
                 add_lecture(group, row, col)
@@ -640,16 +638,15 @@ def execute_case_2(group, row, col, group_courses, length, single_row, cells_gro
 
     elif find_words(length, 'lec', left_up.lower()) and find_words(exp_length, 'lec', left_down.lower()):
         if not single_row:
-            lecture_case = check_lecture_case(row, col, group_courses)
+            lecture_case = check_lecture_case(row, col)
             if lecture_case == 1:
                 group.lecture.time.to = fr
             elif lecture_case == 3:
                 place = check_place(left_up)
                 add_lecture_extension(group, place)
-            # course_name = set_course_name(left_down.split('-')[0], group_courses)
             course_name = modify_course_name(left_down.split('-')[0])
             group = set_group(group_courses)
-            lecture_case = check_lecture_case(row + 1, col, group_courses, 2)
+            lecture_case = check_lecture_case(row + 1, col, 2)
             if lecture_case == 2:
                 row += 2
                 add_lecture(group, row, col)
@@ -657,7 +654,7 @@ def execute_case_2(group, row, col, group_courses, length, single_row, cells_gro
                 place = check_place(left_down)
                 add_lecture_extension(group, place)
         else:
-            lecture_case = check_lecture_case(row, col, group_courses, 1, single_row)
+            lecture_case = check_lecture_case(row, col, 1, single_row)
             if lecture_case == 1:
                 group.lecture.time.to = fr
             elif lecture_case == 2:
@@ -816,7 +813,7 @@ def execute_case_10(group, row, col, group_courses, length, cells_group):
             create_tutorial(group, place, 1, True)
         group.wait = True
     elif find_words(length, 'lec', main_cell.lower()):
-        lecture_case = check_lecture_case(row, col, group_courses, 1, True)
+        lecture_case = check_lecture_case(row, col, 1, True)
         if lecture_case == 1:
             group.lecture.time.to = fr
         elif lecture_case == 2:
