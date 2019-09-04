@@ -578,6 +578,8 @@ def execute_case_2(group, row, col, group_courses, length, single_row, cells_gro
                 return row + 1000
             else:
                 create_lab(group, 2)
+        elif not find_words(length, 'lab', left_up.lower()) and find_words(length, 'lab', left_down.lower()):
+            create_lab(group, 2)
 
         course_name = left_down.split('-')[0]
         course_name = modify_course_name(course_name)
