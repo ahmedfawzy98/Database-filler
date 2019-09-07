@@ -508,18 +508,7 @@ def manage_cases(case, group, row, col, group_courses, length, single_row, cells
 def execute_case_1(group, row, col, length, single_row, cells_group):
     left_up = cells_group['left_up']
 
-    if find_words(length, 'lab', left_up.lower()):
-        create_lab(group, 2)
-    elif find_words(length, 'tut', left_up.lower()):
-        # special case of skipping one row after tutorial info and have place in the row after
-        if row != sheet.nrows - 2 and sheet.cell_value(row + 1, col) == '' and sheet.cell_value(row + 2, col).lower().startswith('place'):
-            place = check_place(sheet.cell_value(row + 2, col))
-            row += 2
-        else:
-            place = check_place(left_up)
-        create_tutorial(group, place, 1)
-        group.wait = True
-    elif find_words(length, 'lec', left_up.lower()):
+    if find_words(length, 'lec', left_up.lower()):
         # special case of skipping one row after lecture info and have place in the row after
         if row != sheet.nrows - 2 and sheet.cell_value(row + 1, col) == '' and sheet.cell_value(row + 2, col).lower().startswith('place'):
             place = check_place(sheet.cell_value(row + 2, col))
@@ -543,6 +532,17 @@ def execute_case_1(group, row, col, length, single_row, cells_group):
         elif lecture_case == 4:
             place = check_place(left_up)
             add_lecture(group, row, col, True, place)
+    elif find_words(length, 'tut', left_up.lower()):
+        # special case of skipping one row after tutorial info and have place in the row after
+        if row != sheet.nrows - 2 and sheet.cell_value(row + 1, col) == '' and sheet.cell_value(row + 2, col).lower().startswith('place'):
+            place = check_place(sheet.cell_value(row + 2, col))
+            row += 2
+        else:
+            place = check_place(left_up)
+        create_tutorial(group, place, 1)
+        group.wait = True
+    elif find_words(length, 'lab', left_up.lower()):
+        create_lab(group, 2)
     return row
 
 
@@ -558,7 +558,7 @@ def execute_case_2(group, row, col, group_courses, length, single_row, cells_gro
     if not find_words(length, 'lec', left_up.lower()) and not find_words(exp_length, 'lec', left_down.lower()):
         # the second part of condition because there is a case not containing tut word but its actually tutorial
         # so the differentiation with place word
-        if find_words(length, 'tut', left_up.lower()) or find_words(0, 'place', left_down.lower()):
+        if find_words(length, 'tut', left_up.lower()):  #  or find_words(0, 'place', left_down.lower())
             if find_words(exp_length, 'place', left_down.lower()) and not find_words(exp_length, 'tut', left_down.lower()) \
                     and not find_words(exp_length, 'lab', left_down.lower()):
                 place = check_place(left_down)
@@ -580,7 +580,13 @@ def execute_case_2(group, row, col, group_courses, length, single_row, cells_gro
                 create_lab(group, 2)
         elif not find_words(length, 'lab', left_up.lower()) and find_words(length, 'lab', left_down.lower()):
             create_lab(group, 2)
-
+        else:
+            if find_words(0, 'place', left_down.lower()):
+                place = check_place(left_down)
+                create_tutorial(group, place, 1)
+                group.wait = True
+                row += 2
+                return row + 1000
         course_name = left_down.split('-')[0]
         course_name = modify_course_name(course_name)
         group = set_group(group_courses)
@@ -964,8 +970,10 @@ def can_be_merged(group_1, group_2, times):
 
 
 def merge_groups(group_1, group_2, case=0):
-    group_1.tutorials = group_2.tutorials
-    group_1.labs = group_2.labs
+    if len(group_1.tutorials) < 2:
+        group_1.tutorials = group_2.tutorials
+    if len(group_1.labs) < 2:
+        group_1.labs = group_2.labs
     if case == 1:
         merge_lecture_information(group_1, group_2)
 
