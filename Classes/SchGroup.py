@@ -15,7 +15,10 @@ class SchGroup:
         self.lecExFrom = ''
         self.lecExTo = ''
         self.creditHours = None
-        self.wait = False
+        self.tut_wait = False
+        self.lab_wait = False
+        self.lab_case = None
+        self.tut_case = None
 
     def setLecture(self, lecture):
         self.lecture = lecture
