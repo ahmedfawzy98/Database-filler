@@ -6,3 +6,4 @@ pyvenv.cfg
 .~lock*
 try.xlsx
 try.py
+Classes/__pycache__
