@@ -1073,6 +1073,8 @@ def fix_waiting_groups(saved_groups):
                 else:
                     tut.time.fr -= 1
                     tut.time.to -= 1
+                group.tutorials[0].type = '2'
+                tut.type = '2'
                 group.tutorials.append(tut)
             group.tut_wait = False
         if group.lab_wait:
