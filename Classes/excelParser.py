@@ -270,10 +270,12 @@ def fix_tutorials(tutorials):
                 break
 
 
-def add_lecture_extension(group, place):
+def add_lecture_extension(group, place, case=False):
     group.lecExPlace = place
     group.lecExDay = day
     group.lecExFrom = fr
+    if case:
+        group.lecExFrom = to
     group.lecExTo = to
 
 
@@ -687,7 +689,7 @@ def execute_case_2(group, row, col, group_courses, length, single_row, start_row
                 add_lecture(group, row, col)
             elif lecture_case == 3:
                 place = check_place(left_down)
-                add_lecture_extension(group, place)
+                add_lecture_extension(group, place, True)
         else:
             lecture_case = check_lecture_case(row, col, 1, single_row)
             if lecture_case == 1:
