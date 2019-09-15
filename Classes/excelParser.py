@@ -738,11 +738,14 @@ def execute_case_4(group, length, cells_group):
 
     # the second part of condition because there is a case not containing tut word but its actually tutorial
     # so the differentiation with place word
-    if find_words(length, 'tut', right_up.lower()) or find_words(0, 'place', right_down.lower()):
+    if find_words(length, 'tut', right_up.lower()):
         place = check_place(right_down)
         create_tutorial(group, place, 1, True)
     elif find_words(length, 'lab', right_up.lower()):
         create_lab(group, 1, True)
+    else:
+        place = check_place(right_down)
+        create_tutorial(group, place, 1, True)
 
 
 def execute_case_5(group, length, cells_group):
