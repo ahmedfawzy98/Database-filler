@@ -565,6 +565,7 @@ def execute_case_1(group, row, col, length, single_row, cells_group):
         create_lab(group, 2)
         if is_in_merged_cells(row, col) == 'short_cell':
             group.labs.remove(group.labs[-1])
+            group.lab_case = 1
     return row
 
 
@@ -1093,6 +1094,8 @@ def fix_waiting_groups(saved_groups):
                 else:
                     lab.time.fr -= 1
                     lab.time.to -= 1
+                group.labs[0].type = '2'
+                lab.type = '2'
                 group.labs.append(lab)
 
             group.lab_wait = False
@@ -1104,9 +1107,8 @@ def fix_waiting_groups(saved_groups):
         #     group.labs.remove(group.labs[-1])
 
         # just if needed
-        # if len(group.labs) == 1 and len(group.tutorials) == 2:
-        #     group.tutorials.remove(group.tutorials[-1])
-
+        if len(group.labs) == 2 and group.lab_case == 1:
+            group.labs[0].type = '1'
 
 def in_lec_courses(group):
     lec_courses = ['History', 'English']
