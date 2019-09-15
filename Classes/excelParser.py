@@ -137,8 +137,8 @@ def set_group(group_courses):
     return group_courses[course_name]
 
 
-def check_cell_case(left_up, left_down, right_up, right_down, single_row, row=None):
-    if single_row and (left_up != '' or right_up != ''):
+def check_cell_case(left_up, left_down, right_up, right_down, single_row, last_row, row=None):
+    if (single_row and (left_up != '' or right_up != '')) or (last_row and (left_up != '' or right_up != '')):
         return 10
     elif left_up != '' and left_down == '' and right_up == '' and right_down == '' and row != sheet.nrows:
         return 1
@@ -205,12 +205,14 @@ def create_tutorial(group, place, tut_type, right=False):
         group.add_tut(tut)
 
 
-def check_lecture_case(row, col, cell_case=1, single_row=False):
+def check_lecture_case(row, col, cell_case=1, single_row=False, last_row=False):
     global course_name
     previous = sheet.cell_value(row - 2, col)
-    next_cell = sheet.cell_value(row + 2, col)
-    if cell_case == 2 or single_row:
-        next_cell = sheet.cell_value(row + 1, col)
+    next_cell = ''
+    if not last_row:
+        next_cell = sheet.cell_value(row + 2, col)
+        if cell_case == 2 or single_row:
+            next_cell = sheet.cell_value(row + 1, col)
     if 'lec' in str(previous).lower():
         crs_name = modify_course_name(previous.split('-')[0])
         if crs_name.startswith(course_name):
@@ -424,7 +426,7 @@ def extract_table():
             if not last_row and str(sheet.cell_value(row + 1, 1)) != '':
                 single_row = True
 
-            case = check_cell_case(left_up, left_down, right_up, right_down, single_row, row)
+            case = check_cell_case(left_up, left_down, right_up, right_down, single_row, last_row, row)
             if case == -1:
                 row += 1
                 continue
@@ -436,7 +438,7 @@ def extract_table():
             length = min(length_1, length_2)
             group = set_group(group_courses)
 
-            cases_execution = manage_cases(case, group, row, col, group_courses, length, single_row, cells_group, start_row)
+            cases_execution = manage_cases(case, group, row, col, group_courses, length, single_row, cells_group, start_row, last_row)
             if cases_execution is not None:
                 # continue case
                 if cases_execution > 1000:
@@ -487,7 +489,7 @@ def extract_course_name(left_up, left_down, right_up, right_down, case):
         return left_up.split('-')[0]
 
 
-def manage_cases(case, group, row, col, group_courses, length, single_row, cells_group, start_row):
+def manage_cases(case, group, row, col, group_courses, length, single_row, cells_group, start_row, last_row):
     if case == 1:
         return execute_case_1(group, row, col, length, single_row, cells_group)
     elif case == 2:
@@ -507,7 +509,7 @@ def manage_cases(case, group, row, col, group_courses, length, single_row, cells
     elif case == 9:
         execute_case_9(group, length, cells_group)
     elif case == 10:
-        return execute_case_10(group, row, col, group_courses, length, cells_group, start_row)
+        return execute_case_10(group, row, col, group_courses, length, cells_group, start_row, last_row)
 
 
 def is_in_merged_cells(row, col):
@@ -838,7 +840,7 @@ def execute_case_9(group, length, cells_group):
         create_lab(group, 1, True)
 
 
-def execute_case_10(group, row, col, group_courses, length, cells_group, start_row):
+def execute_case_10(group, row, col, group_courses, length, cells_group, start_row, last_row):
     global course_name
     left_up = cells_group['left_up']; right_up = cells_group['right_up']
 
@@ -865,7 +867,7 @@ def execute_case_10(group, row, col, group_courses, length, cells_group, start_r
             elif sheet.cell_value(start_row - 1, col + 1) != '':
                 group.tut_wait = True
         elif find_words(length, 'lec', left_up.lower()):
-            lecture_case = check_lecture_case(row, col, 1, True)
+            lecture_case = check_lecture_case(row, col, 1, True, last_row)
             if lecture_case == 1:
                 group.lecture.time.to = fr
             elif lecture_case == 2:
