@@ -945,6 +945,10 @@ def modify_course_name(name):
     elif name.endswith('II'):
         name = name.rstrip('II')
         name = name + '2'
+    # special case of lI
+    elif name.endswith('lI'):
+        name = name.rstrip('lI')
+        name = name + '2'
     elif name.endswith('I'):
         name = name.rstrip('I')
         name = name + '1'
