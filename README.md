@@ -13,3 +13,5 @@ problems should work on:
 1. lecture extension can't know in which half of period should be placed so we place it in whole period
 
 2. sometimes schedules come with some errors that we can't know its case even as humans so it from hard coded 5% 
+
+3. Credit Hours of all courses not included so it must be hard coded also
