@@ -632,6 +632,7 @@ def execute_case_2(group, row, col, group_courses, length, single_row, start_row
             single_row = True
         if left_down.startswith('Place'):
             add_lecture(group, row, col, True)
+            return row
         # this case if all information of lecture was written in left_up cell and left_down has the inst name only
         elif 'place' in left_up[length:].lower() and 'Dr' in left_down:
             place = check_place(left_up)
@@ -649,6 +650,7 @@ def execute_case_2(group, row, col, group_courses, length, single_row, start_row
 
         if find_words(exp_length, 'tut', left_down.lower()):
             place = check_place(left_down)
+            # for case of completion of lecture and tut after it
             if half:
                 create_tutorial(group, place, 1, True)
             else:
