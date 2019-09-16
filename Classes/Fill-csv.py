@@ -7,6 +7,8 @@ import pyautogui
 from Classes.Tutorial import Tutorial
 import fileinput
 
+"""THIS IS THE TERMINAL VERSION OF DATABASE FILLER """
+
 # import msvcrt
 
 groups = []

@@ -1,9 +1,11 @@
 import os
 import re
 
+
 import xlrd
 import copy
 
+from art import *
 from Classes.Lab import Lab
 from Classes.SchGroup import SchGroup
 from Classes.Tutorial import Tutorial
@@ -1195,5 +1197,6 @@ def parse_all_tables():
 
 if __name__ == '__main__':
     parse_all_tables()
-    print("Information saved in the files successfully")
-    print("Parsing Done")
+    # print("Information saved in the files successfully")
+    # print("Parsing Done")
+    tprint('P a r s i n g                        D o n e')
