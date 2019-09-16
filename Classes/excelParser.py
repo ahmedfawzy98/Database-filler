@@ -627,6 +627,7 @@ def execute_case_2(group, row, col, group_courses, length, single_row, start_row
             create_lab(group, 2)
 
     elif find_words(length, 'lec', left_up.lower()) and not find_words(exp_length, 'lec', left_down.lower()):
+        half = False
         if course_name == 'Project 1' or course_name == 'Project 2':
             single_row = True
         if left_down.startswith('Place'):
@@ -638,15 +639,20 @@ def execute_case_2(group, row, col, group_courses, length, single_row, start_row
             return
         elif check_lecture_case(row, col, 1, single_row) == 1:
             group.lecture.time.to = fr
+            half = True
         elif check_lecture_case(row, col, 1, single_row) == 3:
             place = check_place(left_up)
             add_lecture_extension(group, place)
         elif check_lecture_case(row, col, 1, single_row) == 4:
             place = check_place(left_up)
             add_lecture(group, row, col, True, place)
+
         if find_words(exp_length, 'tut', left_down.lower()):
             place = check_place(left_down)
-            create_tutorial(group, place, 2)
+            if half:
+                create_tutorial(group, place, 1, True)
+            else:
+                create_tutorial(group, place, 2)
             if len(group.tutorials) > 2:
                 fix_tutorials(group.tutorials)
         elif find_words(exp_length, 'lab', left_down.lower()):
