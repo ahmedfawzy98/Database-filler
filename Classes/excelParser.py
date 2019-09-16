@@ -556,11 +556,14 @@ def execute_case_1(group, row, col, length, single_row, cells_group):
         if row != sheet.nrows - 2 and sheet.cell_value(row + 1, col) == '' and sheet.cell_value(row + 2, col).lower().startswith('place'):
             place = check_place(sheet.cell_value(row + 2, col))
             row += 2
+            create_tutorial(group, place, 1)
         else:
             place = check_place(left_up)
-        create_tutorial(group, place, 1)
-        if is_in_merged_cells(row, col) == 'long_cell':
-            group.tut_wait = True
+            create_tutorial(group, place, 1)
+            if is_in_merged_cells(row, col) == 'long_cell':
+                group.tut_wait = True
+            else:
+                group.tut_case = 1
     elif find_words(length, 'lab', left_up.lower()):
         create_lab(group, 2)
         if is_in_merged_cells(row, col) == 'short_cell':
@@ -1096,8 +1099,8 @@ def fix_waiting_groups(saved_groups):
                 else:
                     tut.time.fr -= 1
                     tut.time.to -= 1
-                group.tutorials[0].type = '2'
-                tut.type = '2'
+                group.tutorials[0].type = 2
+                tut.type = 2
                 group.tutorials.append(tut)
             group.tut_wait = False
         if group.lab_wait:
@@ -1109,21 +1112,21 @@ def fix_waiting_groups(saved_groups):
                 else:
                     lab.time.fr -= 1
                     lab.time.to -= 1
-                group.labs[0].type = '2'
-                lab.type = '2'
+                group.labs[0].type = 2
+                lab.type = 2
                 group.labs.append(lab)
 
             group.lab_wait = False
         # special case of being tutorial or lab in left part of cell and
-        # if len(group.tutorials) == 1 and len(group.labs) == 2 and group.lab_case != 1:
-        #     group.labs.remove(group.labs[-1])
+        if len(group.tutorials) == 1 and group.tut_case == 1:
+            group.tutorials[0].type = 2
 
         # if len(group.tutorials) == 1 and len(group.labs) == 2 and group.lab_case == 1:
         #     group.labs.remove(group.labs[-1])
 
         # just if needed
         if len(group.labs) == 2 and group.lab_case == 1:
-            group.labs[0].type = '1'
+            group.labs[0].type = 1
 
 def in_lec_courses(group):
     lec_courses = ['History', 'English']
