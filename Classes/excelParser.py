@@ -997,10 +997,11 @@ def check_common_words(name1, name2, times):
 
     counter = 0
     digits = 0
-    rejected_words = ['and', 'or', 'of']
+    # repeated words that makes comparison not accurate
+    rejected_words = ['and', 'or', 'of', 'to', 'introduction', 'structures', 'marine']
     for word in name1_words:
         for word2 in name2_words:
-            if word.lower() == word2.lower() and word not in rejected_words:
+            if word.lower() == word2.lower() and word.lower() not in rejected_words:
                 if word.isdigit():
                     digits += 1
                 counter += 1
