@@ -244,9 +244,10 @@ def check_place(cell_text):
                 place = 'Unknown'
             else:
                 place = cell_text[cell_text.lower().find('place') + 5:]
+    place = place.replace('-', '')
+    place = place.strip()
     if place.isdigit():
         place = 'Class ' + place
-    place = place.replace('-', '')
     place = re.sub(' +', ' ', place)
     if place == '':
         return 'Unknown'
