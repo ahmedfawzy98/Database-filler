@@ -572,6 +572,10 @@ def execute_case_1(group, row, col, length, single_row, cells_group):
         if is_in_merged_cells(row, col) == 'short_cell':
             group.labs.remove(group.labs[-1])
             group.lab_case = 1
+        elif not is_in_merged_cells(row, col):
+            group.labs[0].type = 1
+            group.labs.remove(group.labs[-1])
+            group.lab_wait = True
     return row
 
 
