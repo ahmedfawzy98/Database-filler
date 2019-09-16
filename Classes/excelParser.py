@@ -494,7 +494,7 @@ def extract_course_name(left_up, left_down, right_up, right_down, case):
 
 def manage_cases(case, group, row, col, group_courses, length, single_row, cells_group, start_row, last_row):
     if case == 1:
-        return execute_case_1(group, row, col, length, single_row, cells_group)
+        return execute_case_1(group, row, col, length, start_row, single_row, cells_group)
     elif case == 2:
         return execute_case_2(group, row, col, group_courses, length, single_row, start_row, cells_group)
     elif case == 3:
@@ -527,15 +527,16 @@ def is_in_merged_cells(row, col):
     return False
 
 
-def execute_case_1(group, row, col, length, single_row, cells_group):
+def execute_case_1(group, row, col, length, start_row, single_row, cells_group):
     left_up = cells_group['left_up']
 
     if find_words(length, 'lec', left_up.lower()):
         # special case of skipping one row after lecture info and have place in the row after
-        if row != sheet.nrows - 2 and sheet.cell_value(row + 1, col) == '' and sheet.cell_value(row + 2, col).lower().startswith('place'):
+        if row != sheet.nrows - 2 and sheet.cell_value(row + 2, col).lower().startswith('place'):
             place = check_place(sheet.cell_value(row + 2, col))
             add_lecture(group, row, col, True, place)
             row += 2
+            return row
         # special cases of project 1 and project 2
         if course_name == 'Project 1' or course_name == 'Project 2':
             single_row = True
@@ -564,6 +565,8 @@ def execute_case_1(group, row, col, length, single_row, cells_group):
             place = check_place(left_up)
             create_tutorial(group, place, 1)
             if is_in_merged_cells(row, col) == 'long_cell':
+                group.tut_wait = True
+            elif is_in_merged_cells(row, col) == 'short_cell' and sheet.cell_value(start_row - 1, col + 1) != '':
                 group.tut_wait = True
             else:
                 group.tut_case = 1
