@@ -958,6 +958,9 @@ def modify_course_name(name):
     elif name.endswith('I'):
         name = name.rstrip('I')
         name = name + '1'
+    elif name.endswith('l') and name[-2] == ' ':
+        name = name.rstrip('l')
+        name = name + '1'
 
     name = re.sub(' +', ' ', name)
     name = name.rstrip(' ')
