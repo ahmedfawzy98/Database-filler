@@ -361,20 +361,20 @@ def write_file():
                                                           group.tutorials[j].periodType))
         if len(group.labs) == 0:
             f.write(empty + ",")
-            f.write(empty + "\n")
+            f.write(empty + department + "\n")
         elif len(group.labs) == 1:
             f.write(
                 '{},{},{},{},{},{},{},{},'.format(group.labs[0].instName, group.labs[0].courseName,
                                                   group.labs[0].place, group.labs[0].type,
                                                   group.labs[0].time.day, group.labs[0].time.fr,
                                                   group.labs[0].time.to, group.labs[0].periodType))
-            f.write(empty + "\n")
+            f.write(empty + department + "\n")
         else:
             for j in range(2):
                 if j == 0:
                     end = ","
                 else:
-                    end = "\n"
+                    end = ',' + department + "\n"
                 f.write('{},{},{},{},{},{},{},{}{}'.format(group.labs[j].instName,
                                                            group.labs[j].courseName,
                                                            group.labs[j].place, group.labs[0].type,
@@ -487,7 +487,7 @@ def set_department(file):
     elif file.lower().startswith('oce'):
         department = 'OCE'
     else:
-        department = None
+        department = 'None'
 
 
 def fill_credit_hours(group_courses):
