@@ -465,11 +465,30 @@ def extract_table():
             col += 1
 
         group_courses = fix_groups(group_courses)
+        fill_credit_hours(group_courses.values())
         for group in group_courses.values():
             groups.append(group)
         group_courses.clear()
         write_file()
     groups.clear()
+
+
+def fill_credit_hours(group_courses):
+    credit_hours = {'human rights': 1, 'history of engineering': 1, 'english language': 2, 'technical writing': 2,
+                    'economics': 2, 'project management': 2, 'ethics': 2, 'human resource management': 2,
+                    'accounting': 2, 'strategic management': 2, 'computer and society': 2, 'marketing': 2,
+                    'finance': 2, 'human computer interaction': 2, 'feasibility': 2, 'analytical skills': 2,
+                    'communication laws': 2, 'construction contracts and law': 2, 'communication skills': 2,
+                    'principles of industrial health': 2, 'social risks of computer systems': 2,
+                    'programming 2': 4, 'computer networks': 4, 'database': 4, 'project 2': 4}
+
+    for group in group_courses:
+        if group.lecture.courseName.lower() in credit_hours:
+            group.creditHours = credit_hours[group.lecture.courseName.lower()]
+        elif term_number == 11:
+            group.creditHours = 2
+        else:
+            group.creditHours = 3
 
 
 def find_words(start, target_text, cell_text):
