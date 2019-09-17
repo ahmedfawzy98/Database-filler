@@ -22,6 +22,7 @@ term_number = ''
 day = ''
 fr = ''
 to = ''
+department = ''
 
 
 def set_group_number(cell_text):
@@ -473,6 +474,22 @@ def extract_table():
     groups.clear()
 
 
+def set_department(file):
+    global department
+    if file.lower().startswith('cce'):
+        department = 'CCE'
+    elif file.lower().startswith('eme'):
+        department = 'EME'
+    elif file.lower().startswith('general'):
+        department = 'General'
+    elif file.lower().startswith('gpe'):
+        department = 'GPE'
+    elif file.lower().startswith('oce'):
+        department = 'OCE'
+    else:
+        department = None
+
+
 def fill_credit_hours(group_courses):
     credit_hours = {'human rights': 1, 'history of engineering': 1, 'english language': 2, 'technical writing': 2,
                     'economics': 2, 'project management': 2, 'ethics': 2, 'human resource management': 2,
@@ -483,12 +500,14 @@ def fill_credit_hours(group_courses):
                     'programming 2': 4, 'computer networks': 4, 'database': 4, 'project 2': 4}
 
     for group in group_courses:
-        if group.lecture.courseName.lower() in credit_hours:
-            group.creditHours = credit_hours[group.lecture.courseName.lower()]
-        elif term_number == 11:
-            group.creditHours = 2
-        else:
-            group.creditHours = 3
+        for item in credit_hours:
+            if group.lecture.courseName.lower().startswith(item):
+                group.creditHours = credit_hours[item]
+        if group.creditHours is None:
+            if term_number == 11:
+                group.creditHours = 2
+            else:
+                group.creditHours = 3
 
 
 def find_words(start, target_text, cell_text):
@@ -1211,6 +1230,7 @@ def parse_all_tables():
             sheet = wb.sheet_by_index(0)
             file = file.replace('.xlsx', '.csv')
             file_path = os.path.join(database_files, file)
+            set_department(file)
             extract_table()
 
 

@@ -3,7 +3,7 @@
 2,3,1,Dr Hussein Tablia,Math 2,CLASS103,1,5,2,3,,,,,Lecture,Unknown,Math 2,Class 701,1,4,5,5,Tut,Unknown,Math 2,Class 701,1,4,6,6,Tut,Unknown,Math 2,Lab,2,1,4,4,Lab,Unknown,Math 2,Lab,2,1,5,5,Lab
 2,3,1,Dr Laila Abo Hadid,Computer Programming,K5,1,2,2,3,,,,,Lecture,Unknown,Computer Programming,Class C12,2,5,6,6,Tut,Unknown,Computer Programming,Class C12,2,5,7,7,Tut,Unknown,Computer Programming,Lab,1,4,2,2,Lab,Unknown,Computer Programming,Lab,1,5,5,5,Lab
 2,3,1,Dr Hashem El-Labban,Production Engineering,Class C26,1,2,4,5,,,,,Lecture,Unknown,Production,Class P41,2,0,6,6,Tut,Unknown,Production,Class P41,2,0,7,7,Tut,Unknown,Production,Lab,1,4,7,7,Lab,Unknown,Production,Lab,1,5,4,4,Lab
-2,3,1,Dr Hitham -Dr Mohamed El-shimy- Dr Alaa Arafa-Dr Mohamed Mohamed Zakaria,History of Engineering Sciences,L5,1,2,6,7,,,,,Lecture,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+2,1,1,Dr Hitham -Dr Mohamed El-shimy- Dr Alaa Arafa-Dr Mohamed Mohamed Zakaria,History of Engineering Sciences,L5,1,2,6,7,,,,,Lecture,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 2,3,1,Dr Gamal Eldalal,Physics 2,P47B,1,5,0,1,,,,,Lecture,Unknown,Physics 2,Class 74,1,4,4,4,Tut,Unknown,Physics 2,Class 74,1,4,9,9,Tut,Unknown,Physics 2,Lab,2,5,6,6,Lab,Unknown,Physics 2,Lab,2,5,7,7,Lab
 2,3,2,Dr Ahmed Salama,Math 2,L4,1,5,8,9,,,,,Lecture,Unknown,Math 2,Class 74,1,1,1,1,Tut,Unknown,Math 2,Class 74,1,1,6,6,Tut,Unknown,Math 2,Lab,2,5,4,4,Lab,Unknown,Math 2,Lab,2,5,5,5,Lab
 2,3,2,Dr yehia Mounir,Physics 2,Class C8,1,4,0,1,,,,,Lecture,Unknown,Physics 2,Class P43,1,1,3,3,Tut,Unknown,Physics 2,Class P43,1,1,8,8,Tut,Unknown,Physics 2,Lab,2,5,6,6,Lab,Unknown,Physics 2,Lab,2,5,7,7,Lab
@@ -17,7 +17,7 @@
 2,3,3,Dr Engy Nagy,Production Engineering,Class C39,1,0,6,7,,,,,Lecture,Unknown,Production,Class 74,2,2,8,8,Tut,Unknown,Production,Class 74,2,2,9,9,Tut,Unknown,Production,Lab,1,1,6,6,Lab,Unknown,Production,Lab,1,3,7,7,Lab
 2,3,3,Dr Ahmed Salama,Math 2,Class C27,1,0,8,9,,,,,Lecture,Unknown,Math 2,Class 72,1,3,3,3,Tut,Unknown,Math 2,Class 72,1,3,6,6,Tut,Unknown,Math 2,Lab,2,3,4,4,Lab,Unknown,Math 2,Lab,2,3,5,5,Lab
 2,3,3,Dr Said Shebl,Graph 2,P47A,1,2,4,5,,,,,Lecture,Unknown,Graph,P47A,1,2,6,6,Tut,Unknown,Graph,Unknown,1,2,8,8,Tut,,,,,,,,,,,,,,,,
-2,3,3,Dr Hitham -Dr Mohamed El-shimy- Dr Alaa Arafa- Dr Mohamed Mohamed Zakaria,History of Engineering Sciences,L5,1,2,10,11,,,,,Lecture,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+2,1,3,Dr Hitham -Dr Mohamed El-shimy- Dr Alaa Arafa- Dr Mohamed Mohamed Zakaria,History of Engineering Sciences,L5,1,2,10,11,,,,,Lecture,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 2,3,3,Dr Sarwat Nagiub,Mech 2,L4,1,5,3,5,,,,,Lecture,Unknown,Mech 2,Class 72,2,3,4,4,Tut,Unknown,Mech 2,Class 72,2,3,5,5,Tut,,,,,,,,,,,,,,,,
 2,3,4,Dr Marwan Torki,Computer Programming,Class 103,1,1,0,1,,,,,Lecture,Unknown,Computer Programming,Class 74,2,0,4,4,Tut,Unknown,Computer Programming,Class 74,2,0,5,5,Tut,Unknown,Computer Programming,Lab,1,5,5,5,Lab,Unknown,Computer Programming,Lab,1,5,6,6,Lab
 2,3,4,Dr Mayssa Amin,Physics 2,K5,1,3,0,1,,,,,Lecture,Unknown,Physics 2,Class 702,1,5,4,4,Tut,Unknown,Physics 2,Class 702,1,5,9,9,Tut,Unknown,Physics 2,Lab,2,0,4,4,Lab,Unknown,Physics 2,Lab,2,0,5,5,Lab
@@ -30,6 +30,6 @@
 2,3,5,Dr Marwan Torki,Computer Programming,Class 103,1,1,2,3,,,,,Lecture,Unknown,Computer Programming,Class 701,2,5,4,4,Tut,Unknown,Computer Programming,Class 701,2,5,5,5,Tut,Unknown,Computer Programming,Lab,1,1,1,1,Lab,Unknown,Computer Programming,Lab,1,2,8,8,Lab
 2,3,5,Dr Ahmed Salama,Math 2,L5,1,3,8,9,,,,,Lecture,Unknown,Math 2,Class 74,1,1,4,4,Tut,Unknown,Math 2,Class 701,1,2,9,9,Tut,Unknown,Math 2,Lab,2,2,2,2,Lab,Unknown,Math 2,Lab,2,2,3,3,Lab
 2,3,5,Dr Eman Harraz,Mech 2,L4,1,5,0,2,,,,,Lecture,Unknown,Mech 2,Class 74,2,2,2,2,Tut,Unknown,Mech 2,Class 74,2,2,3,3,Tut,,,,,,,,,,,,,,,,
-2,3,5,Dr Hitham -Dr Mohamed El-shimy- Dr Alaa Arafa- Dr Mohamed Mohamed Zakaria,History of Engineering Sciences,L5,1,2,6,7,,,,,Lecture,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+2,1,5,Dr Hitham -Dr Mohamed El-shimy- Dr Alaa Arafa- Dr Mohamed Mohamed Zakaria,History of Engineering Sciences,L5,1,2,6,7,,,,,Lecture,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 2,3,5,Dr Mohamed Galal Nassef,Production Engineering,Class C27,1,4,4,5,,,,,Lecture,Unknown,Production,Class 74,2,3,4,4,Tut,Unknown,Production,Class 74,2,3,5,5,Tut,Unknown,Production,Lab,1,1,5,5,Lab,Unknown,Production,Lab,1,2,4,4,Lab
 2,3,5,Dr AShraf Said,Graph 2,P47B,1,4,6,7,,,,,Lecture,Unknown,Graph,P47B,1,4,8,8,Tut,Unknown,Graph,Lab,1,4,10,10,Tut,,,,,,,,,,,,,,,,
