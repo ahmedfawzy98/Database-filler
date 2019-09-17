@@ -15,3 +15,5 @@ problems should work on:
 2. sometimes schedules come with some errors that we can't know its case even as humans so it from hard coded 5% 
 
 3. Credit Hours of all courses not included so it must be hard coded also
+
+4. department field must check 
