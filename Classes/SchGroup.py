@@ -19,6 +19,7 @@ class SchGroup:
         self.lab_wait = False
         self.lab_case = None
         self.tut_case = None
+        self.line_id = None
 
     def setLecture(self, lecture):
         self.lecture = lecture

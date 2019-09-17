@@ -23,6 +23,7 @@ day = ''
 fr = ''
 to = ''
 department = ''
+line_id = 1
 
 
 def set_group_number(cell_text):
@@ -329,11 +330,14 @@ def add_lecture(group, row, col, case=False, place=None, inst_down=False):
 
 
 def write_file():
-    global file_path
+    global file_path, line_id
     empty = ",,,,,,,"
     f = open(file_path, 'w')
     for group in groups:
-        f.write('{},{},{},'.format(group.courseTerm, group.creditHours, group.number))
+        if group.line_id is None:
+            group.line_id = line_id
+            line_id += 1
+        f.write('{},{},{},{},'.format(group.line_id, group.courseTerm, group.creditHours, group.number))
         f.write('{},{},{},{},{},{},{},{},{},{},{},{},'.format(group.lecture.instName, group.lecture.courseName,
                                                               group.lecture.place, group.lecture.type,
                                                               group.lecture.time.day, group.lecture.time.fr,
@@ -361,14 +365,14 @@ def write_file():
                                                           group.tutorials[j].periodType))
         if len(group.labs) == 0:
             f.write(empty + ",")
-            f.write(empty + department + "\n")
+            f.write(empty + ',' + department + "\n")
         elif len(group.labs) == 1:
             f.write(
                 '{},{},{},{},{},{},{},{},'.format(group.labs[0].instName, group.labs[0].courseName,
                                                   group.labs[0].place, group.labs[0].type,
                                                   group.labs[0].time.day, group.labs[0].time.fr,
                                                   group.labs[0].time.to, group.labs[0].periodType))
-            f.write(empty + department + "\n")
+            f.write(empty + ',' + department + "\n")
         else:
             for j in range(2):
                 if j == 0:
