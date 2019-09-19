@@ -446,6 +446,9 @@ def extract_table():
             course_name = modify_course_name(course_name)
             length_2 = len(course_name)
             length = min(length_1, length_2)
+            if course_name == '':
+                row += 1
+                continue
             group = set_group(group_courses)
 
             cases_execution = manage_cases(case, group, row, col, group_courses, length, single_row, cells_group, start_row, last_row)
@@ -663,7 +666,8 @@ def execute_case_2(group, row, col, group_courses, length, single_row, start_row
                 row += 2
                 return row + 1000
             else:
-                create_lab(group, 2)
+                create_lab(group, 1)
+                group.lab_wait = True
         elif not find_words(length, 'lab', left_up.lower()) and find_words(length, 'lab', left_down.lower()):
             create_lab(group, 2)
         else:
@@ -675,6 +679,8 @@ def execute_case_2(group, row, col, group_courses, length, single_row, start_row
                 return row + 1000
         course_name = left_down.split('-')[0]
         course_name = modify_course_name(course_name)
+        if course_name == '':
+            return row
         group = set_group(group_courses)
 
         if find_words(exp_length, 'tut', left_down.lower()):
@@ -952,6 +958,8 @@ def execute_case_10(group, row, col, group_courses, length, cells_group, start_r
         course_name = right_up.split('-')[0]
         course_name = modify_course_name(course_name)
         length = len(course_name)
+        if course_name == '':
+            return row
         group = set_group(group_courses)
 
         if find_words(length, 'lab', right_up.lower()):
@@ -983,6 +991,7 @@ def modify_course_name(name):
 
     name = name.strip()
     name = name.replace('.', '')
+    name = name.replace(':', '')
 
     if name.find('(') != -1 and name.find(')') != -1:
         index = name.find(')')
@@ -1001,6 +1010,9 @@ def modify_course_name(name):
         name = name[:len(name) - 3]
 
     name = name.rstrip(' ')
+    if name.lower() == 'place':
+        name = ''
+
     if name.endswith('IV'):
         name = name.rstrip('IV')
         name = name + '4'
