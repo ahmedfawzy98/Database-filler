@@ -9,6 +9,7 @@ from art import *
 from Classes.Lab import Lab
 from Classes.SchGroup import SchGroup
 from Classes.Tutorial import Tutorial
+from operator import attrgetter
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 tables_path = os.path.join(base_dir, 'tables_excel')
@@ -167,6 +168,11 @@ def check_cell_case(left_up, left_down, right_up, right_down, single_row, last_r
     elif left_up == '' and left_down == '' and right_up != '' and right_down == ''\
             and sheet.cell_value(row + 1, 1) == '':
         return 9
+    elif left_up != '' and left_down == '' and right_up != '' and right_down == '':
+        return 11
+    elif left_up != '' and left_down != '' and right_up == '' and right_down != '':
+        return 12
+
     else:
         return -1
 
@@ -298,9 +304,11 @@ def add_lecture(group, row, col, case=False, place=None, inst_down=False):
         lecture.instName = main_lecture[main_lecture.lower().find('dr'):]
     else:
         lecture.instName = main_lecture[main_lecture.lower().find('dr', length + 1):]
-    if lecture.instName.strip() == '' or len(lecture.instName) == 1:
+    if lecture.instName.strip() == '' or len(lecture.instName) == 1 or lecture.instName.lower() == 'dr':
         lecture.instName = 'Unknown'
     else:
+        if lecture.instName.startswith('dr'):
+            lecture.instName = lecture.instName.replace('dr', 'Dr ')
         lecture.instName = lecture.instName.replace('.', ' ')
         lecture.instName = lecture.instName.replace('Dr', 'Dr ')
         lecture.instName = lecture.instName.replace('Prof', '')
@@ -403,6 +411,7 @@ def extract_table():
     while set_term_number(sheet.cell_value(start_row - 1, temp_col)) == -1:
         temp_col += 1
         set_term_number(sheet.cell_value(start_row - 1, temp_col))
+    # col = 11
     while col < sheet.ncols:
         row = start_row + 1
         while not sheet.cell_value(row, 0).startswith('Sa'):
@@ -414,8 +423,6 @@ def extract_table():
             last_row = True
             left_up = sheet.cell_value(row, col)
             right_up = sheet.cell_value(row, col + 1)
-            # print(sheet.cell(row, col).)
-            # print(sheet.merged_cells)
 
             left_down = None
             right_down = None
@@ -449,7 +456,9 @@ def extract_table():
             if course_name == '':
                 row += 1
                 continue
-            group = set_group(group_courses)
+            group = None
+            if not course_name.lower().startswith('place'):
+                group = set_group(group_courses)
 
             cases_execution = manage_cases(case, group, row, col, group_courses, length, single_row, cells_group, start_row, last_row)
             if cases_execution is not None:
@@ -498,7 +507,7 @@ def set_department(file):
 
 
 def fill_credit_hours(group_courses):
-    credit_hours = {'human rights': 1, 'history of engineering': 1, 'english language': 2, 'technical writing': 2,
+    credit_hours = {'h rights': 1, 'human rights': 1, 'history of engineering': 1, 'english language': 2, 'technical writing': 2,
                     'economics': 2, 'project management': 2, 'ethics': 2, 'human resource management': 2,
                     'accounting': 2, 'strategic management': 2, 'computer and society': 2, 'marketing': 2,
                     'finance': 2, 'human computer interaction': 2, 'feasibility': 2, 'analytical skills': 2,
@@ -508,7 +517,7 @@ def fill_credit_hours(group_courses):
 
     for group in group_courses:
         for item in credit_hours:
-            if group.lecture.courseName.lower().startswith(item):
+            if group.lecture.courseName.lower().startswith(item) or item.startswith(group.lecture.courseName.lower()):
                 group.creditHours = credit_hours[item]
         if group.creditHours is None:
             if term_number == 11:
@@ -549,9 +558,9 @@ def manage_cases(case, group, row, col, group_courses, length, single_row, cells
     elif case == 4:
         execute_case_4(group, length, cells_group)
     elif case == 5:
-        execute_case_5(group, length, cells_group)
+        execute_case_5(group, length, cells_group, row, col)
     elif case == 6:
-        execute_case_6(group, row, length, cells_group)
+        return execute_case_6(group, row, col, length, cells_group)
     elif case == 7:
         execute_case_7(group, group_courses, length, cells_group)
     elif case == 8:
@@ -560,6 +569,10 @@ def manage_cases(case, group, row, col, group_courses, length, single_row, cells
         execute_case_9(group, length, cells_group)
     elif case == 10:
         return execute_case_10(group, row, col, group_courses, length, cells_group, start_row, last_row)
+    elif case == 11:
+        execute_case_11(group, row, col, group_courses, length, cells_group, start_row, last_row)
+    elif case == 12:
+        execute_case_12(group, row, col, group_courses, length, cells_group, start_row, last_row)
 
 
 def is_in_merged_cells(row, col):
@@ -585,7 +598,8 @@ def execute_case_1(group, row, col, length, start_row, single_row, cells_group):
             row += 2
             return row
         # special cases of project 1 and project 2
-        if course_name == 'Project 1' or course_name == 'Project 2':
+        if course_name.lower() == 'project 1' or course_name.lower() == 'project 2' or course_name.lower() == 'project1' \
+                or course_name.lower() == 'project2':
             single_row = True
         lecture_case = check_lecture_case(row, col, 1, single_row)
         if lecture_case == 1:
@@ -630,7 +644,7 @@ def execute_case_1(group, row, col, length, start_row, single_row, cells_group):
 
 
 def execute_case_2(group, row, col, group_courses, length, single_row, start_row, cells_group):
-    global course_name
+    global course_name, sheet
     left_up = cells_group['left_up']; left_down = cells_group['left_down']
 
     exp_length = 0
@@ -640,7 +654,7 @@ def execute_case_2(group, row, col, group_courses, length, single_row, start_row
         exp_length = min(len_1, len(expected_course_name))
 
     cell_case = is_in_merged_cells(row, col)
-
+    # if not course_name.lower().startswith('place'):
     if not find_words(length, 'lec', left_up.lower()) and not find_words(exp_length, 'lec', left_down.lower()):
         # the second part of condition because there is a case not containing tut word but its actually tutorial
         # so the differentiation with place word
@@ -671,7 +685,13 @@ def execute_case_2(group, row, col, group_courses, length, single_row, start_row
         elif not find_words(length, 'lab', left_up.lower()) and find_words(length, 'lab', left_down.lower()):
             create_lab(group, 2)
         else:
-            if find_words(0, 'place', left_down.lower()):
+            if find_words(length, 'Dr', left_up):
+                if left_down.lower().startswith('place'):
+                    place = check_place(left_down)
+                    add_lecture(group, row, col, True, place)
+                    row += 2
+                    return row + 1000
+            elif find_words(0, 'place', left_down.lower()):
                 place = check_place(left_down)
                 create_tutorial(group, place, 1)
                 # group.tut_wait = True
@@ -691,7 +711,8 @@ def execute_case_2(group, row, col, group_courses, length, single_row, start_row
 
     elif find_words(length, 'lec', left_up.lower()) and not find_words(exp_length, 'lec', left_down.lower()):
         half = False
-        if course_name == 'Project 1' or course_name == 'Project 2':
+        if course_name.lower() == 'project 1' or course_name.lower() == 'project 2' or course_name.lower() == 'project1'\
+                or course_name.lower() == 'project2':
             single_row = True
         if left_down.startswith('Place'):
             add_lecture(group, row, col, True)
@@ -711,6 +732,12 @@ def execute_case_2(group, row, col, group_courses, length, single_row, start_row
             place = check_place(left_up)
             add_lecture(group, row, col, True, place)
 
+        course_name = left_down.split('-')[0]
+        course_name = modify_course_name(course_name)
+        if course_name == '':
+            return row
+        group = set_group(group_courses)
+
         if find_words(exp_length, 'tut', left_down.lower()):
             place = check_place(left_down)
             # for case of completion of lecture and tut after it
@@ -721,8 +748,15 @@ def execute_case_2(group, row, col, group_courses, length, single_row, start_row
             if len(group.tutorials) > 2:
                 fix_tutorials(group.tutorials)
         elif find_words(exp_length, 'lab', left_down.lower()):
-            create_lab(group, 2)
+            if len(group.labs) > 0:
+                create_lab(group, 1, True)
+            else:
+                create_lab(group, 2)
             group.lab_case = 2
+        else:
+            place = 'Unknown'
+            create_tutorial(group, place, 1)
+            # if half:
 
     elif not find_words(length, 'lec', left_up.lower()) and find_words(exp_length, 'lec', left_down.lower()):
         if not single_row:
@@ -749,12 +783,15 @@ def execute_case_2(group, row, col, group_courses, length, single_row, start_row
 
     elif find_words(length, 'lec', left_up.lower()) and find_words(exp_length, 'lec', left_down.lower()):
         if not single_row:
-            lecture_case = check_lecture_case(row, col)
-            if lecture_case == 1:
-                group.lecture.time.to = fr
-            elif lecture_case == 3:
-                place = check_place(left_up)
-                add_lecture_extension(group, place)
+            if group.lecture.instName == '':
+                add_lecture(group, row, col, True)
+            else:
+                lecture_case = check_lecture_case(row, col)
+                if lecture_case == 1:
+                    group.lecture.time.to = fr
+                elif lecture_case == 3:
+                    place = check_place(left_up)
+                    add_lecture_extension(group, place)
             course_name = modify_course_name(left_down.split('-')[0])
             group = set_group(group_courses)
             lecture_case = check_lecture_case(row + 1, col, 2)
@@ -762,8 +799,15 @@ def execute_case_2(group, row, col, group_courses, length, single_row, start_row
                 row += 2
                 add_lecture(group, row, col)
             elif lecture_case == 3:
-                place = check_place(left_down)
-                add_lecture_extension(group, place, True)
+                if sheet.cell_value(row + 2, col).lower().startswith('place'):
+                    if group.lecture.instName != '':
+                        place = check_place(sheet.cell_value(row + 2, col))
+                        set_from_to(sheet.cell_value(row + 2, 1))
+                        group.lecture.place = place
+                        group.lecture.time.to = fr
+                else:
+                    place = check_place(left_down)
+                    add_lecture_extension(group, place, True)
         else:
             lecture_case = check_lecture_case(row, col, 1, single_row)
             if lecture_case == 1:
@@ -788,21 +832,51 @@ def execute_case_3(group, group_courses, length, cells_group):
         expected_course_name = modify_course_name(right_up.split('-')[0])
         exp_length = min(len_1, len(expected_course_name))
 
-    if find_words(length, 'tut', left_up.lower()):
-        place = check_place(left_down)
-        create_tutorial(group, place, 1)
-    elif find_words(length, 'lab', left_up.lower()):
-        create_lab(group, 1)
+    if not left_down.split('-')[0].lower().startswith('place'):
+        if find_words(length, 'tut', left_up.lower()):
+            place = check_place(left_up)
+            create_tutorial(group, place, 1)
+        elif find_words(length, 'lab', left_up.lower()):
+            create_lab(group, 1)
+        course_name = left_down.split('-')[0]
+        course_name = modify_course_name(course_name)
+        group = set_group(group_courses)
+        if find_words(length, 'tut', left_down.lower()):
+            place = check_place(left_down)
+            create_tutorial(group, place, 1)
+        elif find_words(length, 'lab', left_down.lower()):
+            create_lab(group, 1)
+    else:
+        if find_words(length, 'tut', left_up.lower()):
+            place = check_place(left_down)
+            create_tutorial(group, place, 1)
+        elif find_words(length, 'lab', left_up.lower()):
+            create_lab(group, 1)
 
     course_name = right_up.split('-')[0]
     course_name = modify_course_name(course_name)
     group = set_group(group_courses)
 
-    if find_words(exp_length, 'tut', right_up.lower()):
-        place = check_place(right_down)
-        create_tutorial(group, place, 1, True)
-    elif find_words(exp_length, 'lab', right_up.lower()):
-        create_lab(group, 1, True)
+    if not right_down.split('-')[0].lower().startswith('place'):
+        if find_words(exp_length, 'tut', right_up.lower()):
+            place = check_place(right_up)
+            create_tutorial(group, place, 1, True)
+        elif find_words(exp_length, 'lab', right_up.lower()):
+            create_lab(group, 1, True)
+        course_name = right_down.split('-')[0]
+        course_name = modify_course_name(course_name)
+        group = set_group(group_courses)
+        if find_words(exp_length, 'tut', right_down.lower()):
+            place = check_place(right_down)
+            create_tutorial(group, place, 1, True)
+        elif find_words(exp_length, 'lab', right_down.lower()):
+            create_lab(group, 1, True)
+    else:
+        if find_words(exp_length, 'tut', right_up.lower()):
+            place = check_place(right_down)
+            create_tutorial(group, place, 1, True)
+        elif find_words(exp_length, 'lab', right_up.lower()):
+            create_lab(group, 1, True)
 
 
 def execute_case_4(group, length, cells_group):
@@ -820,21 +894,37 @@ def execute_case_4(group, length, cells_group):
         create_tutorial(group, place, 1, True)
 
 
-def execute_case_5(group, length, cells_group):
+def execute_case_5(group, length, cells_group, row, col):
+    global sheet
     right_down = cells_group['right_down']
+    if sheet.cell_value(row + 2, col + 1) == '' and sheet.cell_value(row + 3, col + 1).lower().startswith('place'):
+        set_from_to(sheet.cell_value(row + 2, 1))
+        if find_words(length, 'tut', right_down.lower()):
+            place = check_place(sheet.cell_value(row + 3, col + 1))
+            create_tutorial(group, place, 1, True)
+        elif find_words(length, 'lab', right_down.lower()):
+            create_lab(group, 1, True)
+    else:
+        if find_words(length, 'tut', right_down.lower()):
+            place = check_place(right_down)
+            create_tutorial(group, place, 1, True)
+        elif find_words(length, 'lab', right_down.lower()):
+            create_lab(group, 1, True)
 
-    if find_words(length, 'tut', right_down.lower()):
-        place = check_place(right_down)
-        create_tutorial(group, place, 1, True)
-    elif find_words(length, 'lab', right_down.lower()):
-        create_lab(group, 1, True)
 
-
-def execute_case_6(group, row, length, cells_group):
+def execute_case_6(group, row, col, length, cells_group):
+    global sheet
     left_down = cells_group['left_down']
 
     if sheet.cell_value(row + 1, 1) == '':
-        if find_words(length, 'tut', left_down.lower()):
+        if not find_words(length, 'tut', left_down.lower()) and not find_words(length, 'lab', left_down.lower()) and\
+                sheet.cell_value(row + 2, col).lower().startswith('place'):
+            set_from_to(sheet.cell_value(row + 3, 1))
+            place = check_place(sheet.cell_value(row + 2, col))
+            add_lecture(group, row + 1, col, False, place)
+            row += 3
+            return row + 1000
+        elif find_words(length, 'tut', left_down.lower()):
             place = check_place(left_down)
             create_tutorial(group, place, 1, True)
         elif find_words(length, 'lab', left_down.lower()):
@@ -913,10 +1003,13 @@ def execute_case_9(group, length, cells_group):
         create_tutorial(group, place, 1, True)
     elif find_words(length, 'lab', right_up.lower()):
         create_lab(group, 1, True)
+    else:
+        place = 'Unknown'
+        create_tutorial(group, place, 1, True)
 
 
 def execute_case_10(group, row, col, group_courses, length, cells_group, start_row, last_row):
-    global course_name
+    global course_name, sheet
     left_up = cells_group['left_up']; right_up = cells_group['right_up']
 
     case = 0
@@ -946,13 +1039,17 @@ def execute_case_10(group, row, col, group_courses, length, cells_group, start_r
             if lecture_case == 1:
                 group.lecture.time.to = fr
             elif lecture_case == 2:
-                row += 1
-                add_lecture(group, row, col)
+                place = check_place(sheet.cell_value(row + 1, col))
+                # row += 1
+                add_lecture(group, row, col, False, place)
             elif lecture_case == 3:
                 place = check_place(left_up)
                 add_lecture_extension(group, place)
             elif lecture_case == 4:
-                place = check_place(left_up)
+                if sheet.cell_value(row + 1, col).lower().startswith('place'):
+                    place = check_place(sheet.cell_value(row + 1, col))
+                else:
+                    place = check_place(left_up)
                 add_lecture(group, row, col, True, place)
     if case == 2 or case == 3:
         course_name = right_up.split('-')[0]
@@ -983,8 +1080,42 @@ def execute_case_10(group, row, col, group_courses, length, cells_group, start_r
     return row
 
 
+def execute_case_11(group, row, col, group_courses, length, cells_group, start_row, last_row):
+    global course_name
+    left_up = cells_group['left_up']; right_up = cells_group['right_up']
+    if find_words(length, 'tut', left_up.lower()):
+        place = check_place(left_up)
+        create_tutorial(group, place, 1)
+    elif find_words(length, 'lab', left_up.lower()):
+        create_lab(group, 1)
+
+    course_name = right_up.split('-')[0]
+    course_name = modify_course_name(course_name)
+    length = len(course_name)
+    if course_name == '':
+        return
+    group = set_group(group_courses)
+
+    if find_words(length, 'tut', right_up.lower()):
+        place = check_place(right_up)
+        create_tutorial(group, place, 1, True)
+    elif find_words(length, 'lab', right_up.lower()):
+        create_lab(group, 1, True)
+
+
+def execute_case_12(group, row, col, group_courses, length, cells_group, start_row, last_row):
+    left_up = cells_group['left_up']; left_down = cells_group['left_down']; right_down = cells_group['right_down']
+    if right_down.lower().startswith('place'):
+        if left_down.lower().startswith('place'):
+            if find_words(length, 'tut', left_up.lower()):
+                place = check_place(left_down)
+                create_tutorial(group, place, 1)
+            elif find_words(length, 'lab', left_up.lower()):
+                create_lab(group, 1)
+
+
 def modify_course_name(name):
-    saved_names = {'Prog': 'Programming', 'Phy': 'Physics'}
+    saved_names = {'Prog': 'Programming', 'Phy': 'Physics', 'Thermo': 'Thermodynamics'}
     for saved_name in saved_names:
         if saved_name == name[:len(saved_name)] and len(name[len(saved_name):]) <= 3:
             name = name.replace(saved_name, saved_names[saved_name])
@@ -1054,10 +1185,10 @@ def check_common_words(name1, name2, times):
     counter = 0
     digits = 0
     # repeated words that makes comparison not accurate
-    rejected_words = ['and', 'or', 'of', 'to', 'introduction', 'structures', 'marine']
+    rejected_words = ['and', 'or', 'of', 'to', 'introduction', 'marine']
     for word in name1_words:
         for word2 in name2_words:
-            if word.lower() == word2.lower() and word.lower() not in rejected_words:
+            if (word.lower() == word2.lower() or word.lower()[:-1] == word2.lower()) and word.lower() not in rejected_words:
                 if word.isdigit():
                     digits += 1
                 counter += 1
@@ -1195,6 +1326,7 @@ def fix_waiting_groups(saved_groups):
         if len(group.labs) == 2 and group.lab_case == 1:
             group.labs[0].type = 1
 
+
 def in_lec_courses(group):
     lec_courses = ['History', 'English']
     for name in lec_courses:
@@ -1206,6 +1338,7 @@ def in_lec_courses(group):
 def fix_groups(saved_groups):
     all_groups = list(saved_groups.values())
     fix_waiting_groups(all_groups)
+    all_groups.sort(key=attrgetter('lecture.instName'), reverse=True)
 
     for i in range(len(all_groups)):
         test_group = all_groups[i]
@@ -1213,9 +1346,10 @@ def fix_groups(saved_groups):
             continue
         loop = 1
         times = 1
+        # continue_check = False
         while loop > 0:
             loop -= 1
-            for j in range(len(all_groups)):
+            for j in range(i + 1, len(all_groups)):
                 group = all_groups[j]
                 if group.lecture.courseName == 'delete':
                     continue
@@ -1228,8 +1362,13 @@ def fix_groups(saved_groups):
                         merge_groups(test_group, group, 1)
                         group.lecture.courseName = 'delete'
                     elif check == 'continue':
+                        # continue_check = True
                         loop += 1
                         times += 1
+
+            # if continue_check:
+            #     loop = 1
+            #     continue_check = False
 
     group_courses = {}
     for key, group in saved_groups.items():
