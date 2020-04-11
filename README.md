@@ -1,19 +1,15 @@
-# database-filler
-Description:
-This is the database filler project that feeds the scheduler project with information or schedules.
+# Database-Filler
+Database-Filler is a sub-project of the [SSP-Scheduler](https://github.com/amohamed97/SSPScheduler-WebApp) that is responsible for feeding the SSP-Scheduler with the required data to work with.
 
-We tried to make the operation of filling database automated as possible as we can and 
-we can say its automated with 95%
+## Motivation
+We developed the Database-Filler to automate the extraction of database from its initial form to the form which SSP-Scheduler works with
 
-the other 5% cover all the cases that can't be covered with the filler by hard coding them
+## How It Works 
+Database-Filler working on the initial form of the database(microsoft excel files) and outputting a new database files(csv files)
+that are ready for using with SSP-Scheduler.
 
-so reviewing the database before using it will be always important to cover these cases
+## Tasks
+- [x] Automation of extraction the data from database files.
+- [ ] Automation of testing the data extracted.
 
-problems should work on:
-1. lecture extension can't know in which half of period should be placed so we place it in whole period
 
-2. sometimes schedules come with some errors that we can't know its case even as humans so it from hard coded 5% 
-
-3. Credit Hours of all courses not included so it must be hard coded also
-
-4. department field must check 
